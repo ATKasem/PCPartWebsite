@@ -1,0 +1,56 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>PC Builder Website</title>
+    <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+    <header>
+        <h1>PC Builds</h1>
+        <p>Choose your gaming PC build</p>
+    </header>
+
+    <main id="builds-container">
+        <!-- Builds will be loaded here -->
+    </main>
+
+    <script src="builds.js"></script>
+    <script>
+        const container = document.getElementById('builds-container');
+
+        builds.forEach(build => {
+            const buildDiv = document.createElement('div');
+            buildDiv.className = 'build-card';
+
+            buildDiv.innerHTML = `
+                <h2>${build.name}</h2>
+                <div class="specs">
+                    <p><strong>CPU:</strong> ${build.CPU}</p>
+                    <p><strong>RAM:</strong> ${build.RAM} GB</p>
+                    <p><strong>Storage:</strong> ${build.Storage} GB</p>
+                    <p><strong>GPU:</strong> ${build.GPU}</p>
+                    <p><strong>Price:</strong> $${build.price}</p>
+                    <p><strong>FPS:</strong> ${build.FPS}</p>
+                </div>
+                <div class="games">
+                    <h3>Games:</h3>
+                    <ul>
+                        ${Object.entries(build.games).map(([game, data]) => `
+                            <li>
+                                <strong>${game}</strong> (${data.settings}): 
+                                1080p: ${data.performance['1080p']} FPS, 
+                                1440p: ${data.performance['1440p']} FPS, 
+                                4K: ${data.performance['4K']} FPS
+                            </li>
+                        `).join('')}
+                    </ul>
+                </div>
+            `;
+
+            container.appendChild(buildDiv);
+        });
+    </script>
+</body>
+</html>
