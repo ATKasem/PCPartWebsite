@@ -20,27 +20,40 @@ The page is **dynamic**: the list of PC builds updates from the visitor’s choi
 
 The site is **vanilla front end only** — no compile step, no UI framework, no CSS preprocessor, no HTML templating layer. Ship what the browser loads: `.html`, `.css`, and `.js`.
 
+- **No Node for this app** — No `package.json`, `npm`, bundlers, or Node-backed server required to run or deploy it. The product is **static files** the browser loads directly (or via any static host). Do not use `module.exports` / CommonJS in shipped scripts; use plain globals or browser-native modules if you choose `type="module"` later, still without a Node build step.
+
 - **Vanilla HTML** — Hand-written markup in static `.html` files. No JSX, Vue SFCs, or server-side templating for this project. Prefer semantic elements and meaningful structure (headings, `main`, labels tied to controls, etc.).
-- **Vanilla CSS** — Hand-written stylesheets (e.g. a single `styles.css`). No Sass/Less, Tailwind, CSS-in-JS, or component libraries that own your layout. You can still aim for a polished, consistent UI; it is just expressed in plain CSS.
+- **Vanilla CSS** — Hand-written stylesheets (e.g. [`css/styles.css`](css/styles.css)). No Sass/Less, Tailwind, CSS-in-JS, or component libraries that own your layout. You can still aim for a polished, consistent UI; it is just expressed in plain CSS.
 - **Vanilla JavaScript** — No React, Vue, Svelte, Angular, or similar. Use the DOM APIs and plain `<script>` tags (or a small second file like `app.js`). Logic should be easy to read and debug in the browser.
 
 ## Product mindset
 
 The scope is small, but the **process** should match a real product: keep this plan and the main README accurate, name things clearly, handle obvious empty states, and treat accessibility (e.g. labels, focus, contrast) as part of shipping — not an afterthought.
 
+## Project layout
+
+Static site: **entry HTML at the repo root** so hosts like GitHub Pages and simple static servers resolve `/` correctly. Assets live in folders by type.
+
+| Path | Purpose |
+|------|---------|
+| [`index.html`](index.html) | Single page entry. |
+| [`css/styles.css`](css/styles.css) | All styles. |
+| [`js/builds.js`](js/builds.js) | Build data (`builds` array). Add more scripts here (e.g. `js/app.js`, `js/game-clips.js`). |
+| [`media/clips/`](media/clips/) | Game MP4 loops; reference with paths like `media/clips/your-file.mp4` from the HTML/JS perspective. |
+
 ## Data and code
 
 | Piece | Role |
 |--------|------|
-| [`builds.js`](builds.js) | Source of truth: each build has a `games` object keyed by title, with `performance` per resolution. |
-| **Game media (new)** | A **single map** (e.g. `gameClips` in its own small `.js` file or next to builds) from game title → MP4 URL/path. Avoid duplicating the same MP4 path on every build. |
+| [`js/builds.js`](js/builds.js) | Source of truth: each build has a `games` object keyed by title, with `performance` per resolution. |
+| **Game media (new)** | A **single map** (e.g. `gameClips` in [`js/game-clips.js`](js/game-clips.js) when you add it) from game title → MP4 path under `media/clips/`. Avoid duplicating the same path on every build. |
 | [`index.html`](index.html) | Controls: game selection, resolution, min FPS; mount point for build cards. |
-| [`app.js`](app.js) | Read controls, filter `builds`, render cards (including `<video>` + game name + stats). |
-| [`styles.css`](styles.css) | Filter controls, cards, video sizing (e.g. max-width, aspect ratio), empty states. |
+| **`js/app.js`** (when added) | Read controls, filter `builds`, render cards (including `<video>` + game name + stats). |
+| [`css/styles.css`](css/styles.css) | Filter controls, cards, video sizing (e.g. max-width, aspect ratio), empty states. |
 
 ### Data shape notes (video)
 
-- Example field: `clipSrc: 'media/apex-legends.mp4'` on a shared object keyed by game name, **not** repeated inside every build unless you have a strong reason.
+- Example: `'Apex Legends': 'media/clips/apex-legends.mp4'` in a shared object keyed by game name, **not** repeated inside every build unless you have a strong reason.
 - Use relative paths so the site works when opened locally or on static hosting.
 
 ## Behavior (target)
